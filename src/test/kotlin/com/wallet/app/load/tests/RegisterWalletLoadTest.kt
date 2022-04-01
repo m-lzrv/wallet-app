@@ -4,7 +4,6 @@ import com.wallet.app.abstracttest.AbstractTestCase
 import com.wallet.app.dto.RegisterWalletRequestDto
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.api.Timeout
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -12,7 +11,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.post
-import java.util.concurrent.TimeUnit
 
 @Tag("performance")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -20,7 +18,6 @@ import java.util.concurrent.TimeUnit
 @AutoConfigureMockMvc
 class RegisterWalletLoadTest : AbstractTestCase() {
 
-    @Timeout(value = 1, unit = TimeUnit.MINUTES)
     @ParameterizedTest
     @MethodSource("factory")
     fun `register wallet`(playerId: String) {
