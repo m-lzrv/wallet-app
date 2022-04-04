@@ -6,4 +6,8 @@ import java.util.*
 class DuplicateTransactionException(
     val transactionId: UUID,
     val operationType: OperationType
-) : RuntimeException()
+) : RuntimeException() {
+    override fun toString(): String {
+        return "DuplicateTransactionException(transactionId=$transactionId, operationType=$operationType)"
+    }
+}

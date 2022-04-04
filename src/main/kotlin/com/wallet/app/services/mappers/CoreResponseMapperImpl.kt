@@ -18,7 +18,10 @@ class CoreResponseMapperImpl : CoreResponseMapper {
 
     override fun mapWalletBalanceResponse(walletEntity: WalletEntity): GetWalletBalanceResponseDto {
         return GetWalletBalanceResponseDto(
-            walletId = walletEntity.walletId, balance = walletEntity.balance, createdAt = walletEntity.createdAt
+            walletId = walletEntity.walletId,
+            playerId = walletEntity.playerId,
+            balance = walletEntity.balance,
+            createdAt = walletEntity.createdAt
         )
     }
 

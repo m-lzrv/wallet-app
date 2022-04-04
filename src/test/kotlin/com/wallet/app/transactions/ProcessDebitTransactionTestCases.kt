@@ -7,11 +7,15 @@ import com.wallet.app.db.entities.enums.OperationType
 import com.wallet.app.dto.ProcessTransactionDto
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.post
 import java.util.*
+import java.util.stream.Stream
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
@@ -57,12 +61,12 @@ class ProcessDebitTransactionTestCases : AbstractTestCase() {
 
 
     @Test
-    fun `error case - process DEBIT transaction with zero balance`() {
+    fun `error case - process DEBIT transaction with zero wallet balance`() {
 
         val transactionId: UUID = UUID.randomUUID()
         val amount: Long = 10000
 
-        val walletId = createWallet()
+        val walletId = createNewWallet()
 
         val request = mapper.writeValueAsString(ProcessTransactionDto(walletId, transactionId, amount))
 
@@ -75,6 +79,29 @@ class ProcessDebitTransactionTestCases : AbstractTestCase() {
         }.andExpect {
             status {
                 isEqualTo(NOT_ENOUGH_FUNDS_HTTP_CODE)
+            }
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("factory")
+    fun `error case - process DEBIT transaction with zero or negative amount field in request`(amount: Long) {
+
+        val transactionId: UUID = UUID.randomUUID()
+
+        val walletId = createNewWallet()
+
+        val request = mapper.writeValueAsString(ProcessTransactionDto(walletId, transactionId, amount))
+
+        mockMvc.post("/wallet/transaction/{operationType}", OperationType.DEBIT) {
+            contentType = MediaType.APPLICATION_JSON
+            content = request
+            accept = MediaType.APPLICATION_JSON
+        }.andDo {
+            print()
+        }.andExpect {
+            status {
+                isBadRequest()
             }
         }
     }
@@ -156,6 +183,13 @@ class ProcessDebitTransactionTestCases : AbstractTestCase() {
                 isEqualTo(DUPLICATE_TRANSACTION_HTTP_CODE)
             }
         }
+    }
+
+    fun factory(): Stream<Arguments> {
+        return Stream.of(
+            Arguments.of(0),
+            Arguments.of(-1000),
+        )
     }
 
 }

@@ -12,6 +12,9 @@ interface CoreResponseMapper {
     fun mapRegisterResponse(walletEntity: WalletEntity): RegisterWalletResponseDto
 
     fun mapWalletBalanceResponse(walletEntity: WalletEntity): GetWalletBalanceResponseDto
-    fun mapHistoriesToResponse(walletId: UUID, historyEntityList: List<TransactionHistoryEntity>): GetTransactionHistoryResponseDto
+    fun mapHistoriesToResponse(
+        walletId: UUID,
+        historyEntityList: List<TransactionHistoryEntity>
+    ): GetTransactionHistoryResponseDto
 
 }

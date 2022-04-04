@@ -5,6 +5,7 @@ import java.util.*
 
 data class GetWalletBalanceResponseDto(
     val walletId: UUID,
+    val playerId: String,
     val balance: Long,
-    var createdAt: ZonedDateTime
+    val createdAt: ZonedDateTime
 )

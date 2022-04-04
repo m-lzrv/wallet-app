@@ -8,11 +8,15 @@ import com.wallet.app.db.entities.enums.OperationType.DEBIT
 import com.wallet.app.db.entities.enums.TransactionStatus
 import com.wallet.app.db.repositories.TransactionHistoryRepository
 import com.wallet.app.db.repositories.WalletRepository
-import com.wallet.app.dto.*
+import com.wallet.app.dto.CoreTransactionDto
+import com.wallet.app.dto.GetTransactionHistoryResponseDto
+import com.wallet.app.dto.GetWalletBalanceResponseDto
+import com.wallet.app.dto.RegisterWalletResponseDto
 import com.wallet.app.exceptions.DuplicateTransactionException
 import com.wallet.app.exceptions.NotEnoughFundsException
 import com.wallet.app.exceptions.WalletNotFoundException
 import com.wallet.app.services.mappers.CoreResponseMapper
+import com.wallet.app.validation.WalletCoreValidator
 import mu.KotlinLogging
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -26,9 +30,11 @@ class WalletCoreServiceImpl(
     private val walletRepository: WalletRepository,
     private val transactionHistoryRepository: TransactionHistoryRepository,
     private val coreResponseMapper: CoreResponseMapper,
+    private val walletValidator: WalletCoreValidator
 ) : WalletCoreService {
 
     override fun registerWallet(playerId: String): RegisterWalletResponseDto {
+        walletValidator.validateRegisterWallet(playerId)
 
         val walletEntity = WalletEntity(
             walletId = UUID.randomUUID(), playerId = playerId, balance = 0, createdAt = ZonedDateTime.now()
@@ -53,6 +59,7 @@ class WalletCoreServiceImpl(
     }
 
     override fun processTransaction(transaction: CoreTransactionDto) {
+        walletValidator.validateProcessTransaction(transaction)
 
         val walletEntity = walletRepository.findByIdOrNull(transaction.walletId) ?: throw WalletNotFoundException()
 

@@ -40,7 +40,7 @@ abstract class AbstractTestCase {
     @BeforeAll
     fun preConditions() {
         transaction.execute {
-            val walletEntity = WalletEntity(WALLET_ID, USER_1, 100, ZonedDateTime.now())
+            val walletEntity = WalletEntity(WALLET_ID, PLAYER_ID, 0, ZonedDateTime.now())
             walletRepository.saveAndFlush(walletEntity)
         }
     }
@@ -53,23 +53,22 @@ abstract class AbstractTestCase {
         }
     }
 
-    fun createWallet(): UUID {
-        val request2 = mapper.writeValueAsString(RegisterWalletRequestDto(USER_1))
+    fun createNewWallet(): UUID {
+        val request = mapper.writeValueAsString(RegisterWalletRequestDto(PLAYER_ID))
 
         val response = mockMvc.post("/wallet/") {
             contentType = MediaType.APPLICATION_JSON
-            content = request2
+            content = request
             accept = MediaType.APPLICATION_JSON
         }.andReturn().response.contentAsString
 
         val registerWalletResponseDto = mapper.readValue<ExecutionResult<RegisterWalletResponseDto>>(response)
 
-        val walletId = registerWalletResponseDto.result.walletId
-        return walletId
+        return registerWalletResponseDto.result.walletId
     }
 
     companion object {
-        const val USER_1 = "user-1"
+        const val PLAYER_ID = "best-player-ever-id"
         val WALLET_ID: UUID = UUID.fromString("b1a3d12d-ded8-4dbb-882a-4dbf93604888")!!
     }
 }

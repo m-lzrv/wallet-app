@@ -6,4 +6,8 @@ import java.util.*
 class NotEnoughFundsException(
     val transactionId: UUID,
     val operationType: OperationType
-) : RuntimeException()
+) : RuntimeException() {
+    override fun toString(): String {
+        return "NotEnoughFundsException(transactionId=$transactionId, operationType=$operationType)"
+    }
+}
